@@ -4,55 +4,48 @@ using UnityEngine;
 
 public class FireMovement : MonoBehaviour
 {
-    List<GameObject> allPillars;
-    float time;
+
+    private static readonly float X_MIN = -7.0f;
+    private static readonly float X_MAX = 7.0f;
+    private static readonly float Y_MIN = 1.0f;
+    private static readonly float Y_MAX = 5.0f;
+    private static readonly float Z_MIN = 1.0f;
+    private static readonly float Z_MAX = 4.0f;
+    private static float timeToMove = 1.5f;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        allPillars = GetPillarLocations();
-        time = Time.time;
+        StartCoroutine("MoveFlame");
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    IEnumerator MoveFlame()
     {
-        if (Time.time - time > 1.5)
+        while (true)
         {
-            Debug.Log("5 seconds passed");
-            MoveFlame();
-            time = Time.time;
+
+
+            // gameObject.transform.position += Vector3.Lerp(gameObject.transform.position, newPos, Random.Range(0.0f, 1.0f));
+
+            gameObject.transform.Translate(
+               Random.Range(-2.0f, 2.0f),
+               Random.Range(-2.0f, 2.0f),
+               Random.Range(-1.0f, 1.0f)
+            );
+
+            if (gameObject.transform.position.x < X_MIN ||
+                gameObject.transform.position.x > X_MAX ||
+                gameObject.transform.position.y < Y_MIN ||
+                gameObject.transform.position.y > Y_MIN ||
+                gameObject.transform.position.z < Z_MIN ||
+                gameObject.transform.position.z > Z_MAX
+            )
+            {
+                gameObject.transform.position = new Vector3(0.0f, 3.0f, 0.0f);
+            }
+
+            yield return new WaitForSeconds(0.5f);
         }
-    }
-
-    // Returns a list of all the locations where we have a pillar
-    List<GameObject> GetPillarLocations()
-    {
-        GameObject pillars = GameObject.Find("Pillars");
-        List<GameObject> list = new List<GameObject>();
-        int numChilds = pillars.transform.childCount;
-
-        Debug.Log("Child Count is " + numChilds);
-
-        for (int i = 0; i < numChilds; i++)
-        {
-            GameObject pillar = pillars.transform.GetChild(i).gameObject;
-            list.Add(pillar);
-
-
-            Debug.Log("Added " + pillar.name + " to the list");
-        }
-
-
-        return list;
-    }
-
-    void MoveFlame()
-    {
-        int random = Random.Range(0, 5);
-        Vector3 pos = allPillars[random].transform.position;
-        gameObject.transform.position = new Vector3(pos.x, pos.y + 1.5f, pos.z);
-        
-
     }
 }
