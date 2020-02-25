@@ -1,51 +1,40 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 public class FireMovement : MonoBehaviour
 {
-
     private static readonly float X_MIN = -7.0f;
     private static readonly float X_MAX = 7.0f;
     private static readonly float Y_MIN = 1.0f;
     private static readonly float Y_MAX = 5.0f;
-    private static readonly float Z_MIN = 1.0f;
-    private static readonly float Z_MAX = 4.0f;
-    private static float timeToMove = 1.5f;
+    private static readonly float Z_MIN = -9.0f;
+    private static readonly float Z_MAX = 9.0f;
 
+    public bool waiting = false;
+    Vector3 randomPosition;
+    float moveDelay = 1.0f;
 
-    // Start is called before the first frame update
-    void Start()
+    void FixedUpdate()
     {
-        StartCoroutine("MoveFlame");
-    }
-    
-    IEnumerator MoveFlame()
-    {
-        while (true)
+
+        if (waiting == false)
         {
-
-
-            // gameObject.transform.position += Vector3.Lerp(gameObject.transform.position, newPos, Random.Range(0.0f, 1.0f));
-
-            gameObject.transform.Translate(
-               Random.Range(-2.0f, 2.0f),
-               Random.Range(-2.0f, 2.0f),
-               Random.Range(-1.0f, 1.0f)
-            );
-
-            if (gameObject.transform.position.x < X_MIN ||
-                gameObject.transform.position.x > X_MAX ||
-                gameObject.transform.position.y < Y_MIN ||
-                gameObject.transform.position.y > Y_MIN ||
-                gameObject.transform.position.z < Z_MIN ||
-                gameObject.transform.position.z > Z_MAX
-            )
-            {
-                gameObject.transform.position = new Vector3(0.0f, 3.0f, 0.0f);
-            }
-
-            yield return new WaitForSeconds(0.5f);
+            StartCoroutine("LerpCube");
         }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, randomPosition, Time.deltaTime * 1);
+        }
+    }
+
+
+    IEnumerator LerpCube()
+    {
+        randomPosition = new Vector3(Random.Range(X_MIN, X_MAX), Random.Range(Y_MIN, Y_MAX), Random.Range(Z_MIN, Z_MAX));
+        waiting = true;
+        yield return new WaitForSeconds(moveDelay);
+        waiting = false;
+        //Debug.Log ("waited");
     }
 }
