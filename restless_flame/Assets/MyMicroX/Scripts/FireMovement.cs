@@ -11,13 +11,28 @@ public class FireMovement : MonoBehaviour
     private static readonly float Z_MIN = -9.0f;
     private static readonly float Z_MAX = 9.0f;
 
+    private AudioSource[] audios;
+    private int audioIndex = 0;
+
     public bool waiting = false;
     Vector3 randomPosition;
-    float moveDelay = 1.0f;
+    float moveDelay = 0.25f;
+
+
+    private void Start()
+    {
+        audios = GetComponents<AudioSource>();
+    }
 
     void FixedUpdate()
     {
+        if (!audios[audioIndex].isPlaying)
+        {
+            audioIndex = Random.Range(0, audios.Length - 1);
+            audios[audioIndex].Play();
+        }
 
+        
         if (waiting == false)
         {
             StartCoroutine("LerpCube");
@@ -35,6 +50,5 @@ public class FireMovement : MonoBehaviour
         waiting = true;
         yield return new WaitForSeconds(moveDelay);
         waiting = false;
-        //Debug.Log ("waited");
     }
 }
